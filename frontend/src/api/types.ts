@@ -26,6 +26,7 @@ export enum Capability {
     MopDockDryManualTrigger = "MopDockDryManualTriggerCapability",
     OperationModeControl = "OperationModeControlCapability",
     PersistentMapControl = "PersistentMapControlCapability",
+    RepeatCleanControl = "RepeatCleanControlCapability",
     SpeakerTest = "SpeakerTestCapability",
     SpeakerVolumeControl = "SpeakerVolumeControlCapability",
     TotalStatistics = "TotalStatisticsCapability",

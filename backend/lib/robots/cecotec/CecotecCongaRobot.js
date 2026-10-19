@@ -132,6 +132,11 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             })
         );
         this.registerCapability(
+            new capabilities.CecotecRepeatCleanControlCapability({
+                robot: this,
+            })
+        );
+        this.registerCapability(
             new capabilities.CecotecCombinedVirtualRestrictionsCapability({
                 robot: this,
             })

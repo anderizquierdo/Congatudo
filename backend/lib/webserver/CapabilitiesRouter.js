@@ -68,6 +68,7 @@ const CAPABILITY_TYPE_TO_ROUTER_MAPPING = {
     [capabilities.MapSegmentationCapability.TYPE]: capabilityRouters.MapSegmentationCapabilityRouter,
     [capabilities.DoNotDisturbCapability.TYPE]: capabilityRouters.DoNotDisturbCapabilityRouter,
     [capabilities.CarpetModeControlCapability.TYPE]: capabilityRouters.SimpleToggleCapabilityRouter,
+    [capabilities.RepeatCleanControlCapability.TYPE]: capabilityRouters.SimpleToggleCapabilityRouter,
     [capabilities.SpeakerTestCapability.TYPE]: capabilityRouters.SpeakerTestCapabilityRouter,
     [capabilities.VoicePackManagementCapability.TYPE]: capabilityRouters.VoicePackManagementCapabilityRouter,
     [capabilities.MapSegmentEditCapability.TYPE]: capabilityRouters.MapSegmentEditCapabilityRouter,

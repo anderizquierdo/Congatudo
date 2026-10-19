@@ -13,6 +13,7 @@ import {
     deleteTimer,
     fetchCapabilities,
     fetchCarpetModeState,
+    fetchRepeatCleanState,
     fetchCombinedVirtualRestrictionsProperties,
     fetchConsumableStateInformation,
     fetchCurrentStatistics,
@@ -51,6 +52,7 @@ import {
     fetchZoneProperties,
     sendBasicControlCommand,
     sendCarpetModeEnable,
+    sendRepeatCleanEnable,
     sendCleanSegmentsCommand,
     sendCleanZonesCommand,
     sendCombinedVirtualRestrictionsUpdate,
@@ -164,6 +166,7 @@ enum QueryKey {
     ValetudoInformation = "valetudo_information",
     ValetudoVersion = "valetudo_version",
     CarpetMode = "carpet_mode",
+    RepeatClean = "repeat_clean",
     SpeakerVolume = "speaker_volume",
     VoicePackManagement = "voice_pack",
     SystemHostInfo = "system_host_info",
@@ -1033,6 +1036,25 @@ export const useCarpetModeStateMutation = () => {
             return sendCarpetModeEnable(enable).then(fetchCarpetModeState);
         },
         onError: useOnCommandError(Capability.CarpetModeControl)
+    });
+};
+
+export const useRepeatCleanStateQuery = () => {
+    return useQuery( {
+        queryKey: [QueryKey.RepeatClean],
+        queryFn: fetchRepeatCleanState,
+
+        staleTime: Infinity
+    });
+};
+
+export const useRepeatCleanStateMutation = () => {
+    return useValetudoFetchingMutation({
+        queryKey: [QueryKey.RepeatClean],
+        mutationFn: (enable: boolean) => {
+            return sendRepeatCleanEnable(enable).then(fetchRepeatCleanState);
+        },
+        onError: useOnCommandError(Capability.RepeatCleanControl)
     });
 };
 

@@ -2,8 +2,6 @@ import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {
     Capability,
     CarpetSensorMode,
-    useCarpetModeStateMutation,
-    useCarpetModeStateQuery,
     useCarpetSensorModeMutation,
     useCarpetSensorModePropertiesQuery,
     useCarpetSensorModeQuery,
@@ -27,7 +25,6 @@ import {
     NotListedLocation as LocateIcon,
     Pets as PetObstacleAvoidanceControlIcon,
     RoundaboutRight as CollisionAvoidantNavigationControlIcon,
-    Sensors as CarpetModeIcon,
     Waves as CarpetSensorModeIcon,
     Star as QuirksIcon,
 } from "@mui/icons-material";
@@ -79,32 +76,6 @@ const KeyLockCapabilitySwitchListMenuItem = () => {
             primaryLabel={"Lock keys"}
             secondaryLabel={"Prevents the robot from being operated using its physical buttons."}
             icon={<KeyLockIcon/>}
-        />
-    );
-};
-
-const CarpetModeControlCapabilitySwitchListMenuItem = () => {
-    const {
-        data: data,
-        isFetching: isFetching,
-        isError: isError,
-    } = useCarpetModeStateQuery();
-
-    const {mutate: mutate, isPending: isChanging} = useCarpetModeStateMutation();
-    const loading = isFetching || isChanging;
-    const disabled = loading || isChanging || isError;
-
-    return (
-        <ToggleSwitchListMenuItem
-            value={data?.enabled ?? false}
-            setValue={(value) => {
-                mutate(value);
-            }}
-            disabled={disabled}
-            loadError={isError}
-            primaryLabel={"Carpet Mode"}
-            secondaryLabel={"When enabled, the vacuum will recognize carpets automatically and increase the suction."}
-            icon={<CarpetModeIcon/>}
         />
     );
 };
@@ -276,7 +247,6 @@ const RobotOptions = (): React.ReactElement => {
         obstacleAvoidanceControlCapabilitySupported,
         petObstacleAvoidanceControlCapabilitySupported,
         collisionAvoidantNavigationControlCapabilitySupported,
-        carpetModeControlCapabilitySupported,
         carpetSensorModeControlCapabilitySupported,
 
         keyLockControlCapabilitySupported,
@@ -293,7 +263,6 @@ const RobotOptions = (): React.ReactElement => {
         Capability.ObstacleAvoidanceControl,
         Capability.PetObstacleAvoidanceControl,
         Capability.CollisionAvoidantNavigation,
-        Capability.CarpetModeControl,
         Capability.CarpetSensorModeControl,
 
         Capability.KeyLock,
@@ -340,11 +309,6 @@ const RobotOptions = (): React.ReactElement => {
             );
         }
 
-        if (carpetModeControlCapabilitySupported) {
-            items.push(
-                <CarpetModeControlCapabilitySwitchListMenuItem key={"carpetModeControl"}/>
-            );
-        }
         if (carpetSensorModeControlCapabilitySupported) {
             items.push(
                 <CarpetSensorModeControlCapabilitySelectListMenuItem key={"carpetSensorModeControl"}/>
@@ -356,7 +320,6 @@ const RobotOptions = (): React.ReactElement => {
         obstacleAvoidanceControlCapabilitySupported,
         petObstacleAvoidanceControlCapabilitySupported,
         collisionAvoidantNavigationControlCapabilitySupported,
-        carpetModeControlCapabilitySupported,
         carpetSensorModeControlCapabilitySupported
     ]);
 

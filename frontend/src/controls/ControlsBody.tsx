@@ -10,6 +10,7 @@ import RobotStatus from "./RobotStatus";
 import Dock from "./Dock";
 import CurrentStatistics from "./CurrentStatistics";
 import Attachments from "./Attachments";
+import CleaningOptions from "./CleaningOptions";
 import {FanSpeedMediumIcon, WaterGradeLowIcon} from "../components/CustomIcons";
 import React from "react";
 
@@ -23,6 +24,8 @@ const ControlsBody = (): React.ReactElement => {
         mopDockCleanTriggerSupported,
         mopDockDryTriggerSupported,
         currentStatistics,
+        carpetMode,
+        repeatClean,
     ] = useCapabilitiesSupported(
         Capability.BasicControl,
         Capability.FanSpeedControl,
@@ -30,7 +33,9 @@ const ControlsBody = (): React.ReactElement => {
         Capability.OperationModeControl,
         Capability.MopDockCleanManualTrigger,
         Capability.MopDockDryManualTrigger,
-        Capability.CurrentStatistics
+        Capability.CurrentStatistics,
+        Capability.CarpetModeControl,
+        Capability.RepeatCleanControl
     );
 
     const {
@@ -73,6 +78,10 @@ const ControlsBody = (): React.ReactElement => {
                     label="Water"
                     icon={<WaterGradeLowIcon fontSize="small" />}
                 />
+            )}
+
+            {(carpetMode || repeatClean) && (
+                <CleaningOptions carpetMode={carpetMode} repeatClean={repeatClean}/>
             )}
 
             {
