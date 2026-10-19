@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.10.3
+
+- Congatudo remembers **Double pass**, **Carpet mode**, **fan speed** and **water level**
+  and sends them to the robot again before every cleanup started from Congatudo or
+  Home Assistant. The robot resets some of them when a cleanup ends (double pass goes
+  back to off, water back to medium), so they no longer have to be set every time.
+  Cleanups started from the robot's button or its own schedules still use the robot's values.
+
 ## 2026.10.2
 
 - New "Cleaning options" card on the home controls with **Double pass**: the robot
