@@ -27,6 +27,8 @@ module.exports = class CecotecFanSpeedControlCapability extends FanSpeedControlC
             throw new Error("Invalid Preset");
         }
 
+        // Remember it first: the fan speed shown is the remembered one (see getIntensityState)
+        this.robot.setCleaningOption("fanSpeed", matchedPreset.value);
         await this.robot.robot.setFanSpeed(new DeviceFanSpeed({ value: matchedPreset.value }));
     }
 };

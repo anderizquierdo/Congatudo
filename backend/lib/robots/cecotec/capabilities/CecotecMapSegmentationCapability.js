@@ -29,6 +29,7 @@ class CecotecMapSegmentationCapability extends MapSegmentationCapability {
             return segmentIds.includes(room.id.toString());
         });
 
+        await this.robot.applyCleaningOptions();
         await this.robot.robot.cleanRooms(rooms);
     }
 }

@@ -36,7 +36,8 @@ const ToggleOption = ({label, useQuery, useMutation}: ToggleOptionProps): React.
     );
 };
 
-// Both settings are stored on the robot, so they stay as they were left for the next cleanup
+// Congatudo remembers both and sends them again before every cleanup: the robot resets some of
+// them when a cleanup ends
 const CleaningOptions = ({carpetMode, repeatClean}: {carpetMode: boolean; repeatClean: boolean}): React.ReactElement => {
     return (
         <ControlsCard icon={CleaningOptionsIcon} title="Cleaning options">

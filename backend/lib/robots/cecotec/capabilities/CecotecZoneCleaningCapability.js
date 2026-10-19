@@ -41,6 +41,7 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
                 ]);
         });
 
+        await this.robot.applyCleaningOptions();
         await this.robot.robot.cleanAreas(areas);
     }
 

@@ -31,6 +31,8 @@ class CecotecWaterUsageControlCapability extends WaterUsageControlCapability {
             throw new Error("Invalid Preset");
         }
 
+        // Remember it first: the water state shown is the remembered one (see getWaterUsageState)
+        this.robot.setCleaningOption("waterLevel", matchedPreset.value);
         await this.robot.robot.setWaterLevel(new DeviceWaterLevel({ value: matchedPreset.value }));
     }
 }

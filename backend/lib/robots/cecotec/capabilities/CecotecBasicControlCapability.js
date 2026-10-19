@@ -9,6 +9,7 @@ module.exports = class CecotecBasicControlCapability extends BasicControlCapabil
             throw new Error("There is no robot connected to server");
         }
 
+        await this.robot.applyCleaningOptions();
         await this.robot.robot.start();
     }
 

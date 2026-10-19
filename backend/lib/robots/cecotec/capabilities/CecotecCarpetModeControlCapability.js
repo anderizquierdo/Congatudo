@@ -15,7 +15,7 @@ class CecotecCarpetModeControlCapability extends CarpetModeControlCapability {
             throw new Error("There is no robot connected to server");
         }
 
-        return this.robot.robot.device.config?.isCarpetModeEnabled || false;
+        return this.robot.getCleaningOptions().carpetMode ?? this.robot.robot.device.config?.isCarpetModeEnabled ?? false;
     }
 
     /**
@@ -28,6 +28,7 @@ class CecotecCarpetModeControlCapability extends CarpetModeControlCapability {
         }
 
         await this.robot.robot.setCarpetMode(true);
+        this.robot.setCleaningOption("carpetMode", true);
     }
 
     /**
@@ -40,6 +41,7 @@ class CecotecCarpetModeControlCapability extends CarpetModeControlCapability {
         }
 
         await this.robot.robot.setCarpetMode(false);
+        this.robot.setCleaningOption("carpetMode", false);
     }
 }
 

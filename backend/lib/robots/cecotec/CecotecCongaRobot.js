@@ -278,6 +278,81 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         });
     }
 
+    /**
+     * Cleaning options picked by the user. The robot resets some of them when a cleanup ends
+     * (repeat clean, water level), so applyCleaningOptions() sends them again before every
+     * cleanup started from Congatudo.
+     *
+     * @returns {{repeatClean?: boolean, carpetMode?: boolean, fanSpeed?: "off"|"low"|"medium"|"high", waterLevel?: "off"|"low"|"medium"|"high"}}
+     */
+    getCleaningOptions() {
+        return this.config.get("robot").implementationSpecificConfig?.cleaningOptions ?? {};
+    }
+
+    /**
+     * @param {"repeatClean"|"carpetMode"|"fanSpeed"|"waterLevel"} key
+     * @param {boolean|string} value
+     */
+    setCleaningOption(key, value) {
+        const robotConfig = this.config.get("robot");
+
+        robotConfig.implementationSpecificConfig = {
+            ...robotConfig.implementationSpecificConfig,
+            cleaningOptions: {...this.getCleaningOptions(), [key]: value}
+        };
+        this.config.set("robot", robotConfig);
+    }
+
+    /**
+     * Agnoc reads repeatClean but has no setter for it (unlike setCarpetMode), so send the
+     * clean preference directly and update the cached device config the same way it does.
+     *
+     * @param {boolean} enable
+     * @returns {Promise<void>}
+     */
+    async setRepeatClean(enable) {
+        const agnocRobot = this.robot;
+
+        if (!agnocRobot) {
+            throw new Error("There is no robot connected to server");
+        }
+
+        await agnocRobot.sendRecv("USER_SET_DEVICE_CLEANPREFERENCE_REQ", "USER_SET_DEVICE_CLEANPREFERENCE_RSP", {
+            repeatClean: enable
+        });
+
+        if (agnocRobot.device.config) {
+            // @ts-expect-error props is protected; agnoc's own update*() setters write it the same way
+            agnocRobot.device.config.props.isRepeatCleanEnabled = enable;
+        }
+    }
+
+    /**
+     * Best effort: a robot that does not take an option should not block the cleanup.
+     *
+     * @returns {Promise<void>}
+     */
+    async applyCleaningOptions() {
+        const {repeatClean, carpetMode, fanSpeed, waterLevel} = this.getCleaningOptions();
+
+        try {
+            if (repeatClean !== undefined) {
+                await this.setRepeatClean(repeatClean);
+            }
+            if (carpetMode !== undefined) {
+                await this.robot.setCarpetMode(carpetMode);
+            }
+            if (fanSpeed !== undefined) {
+                await this.robot.setFanSpeed(new DeviceFanSpeed({value: fanSpeed}));
+            }
+            if (waterLevel !== undefined) {
+                await this.robot.setWaterLevel(new DeviceWaterLevel({value: waterLevel}));
+            }
+        } catch (e) {
+            Logger.warn("Could not apply the remembered cleaning options", e);
+        }
+    }
+
     onError(err) {
         Logger.error(err);
     }
@@ -876,9 +951,10 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         return new PresetSelectionStateAttribute({
             type: PresetSelectionStateAttribute.TYPE.FAN_SPEED,
             // TODO: this should have a mapper.
-            value: fanSpeed ?
+            // Show the remembered speed, like the water level below
+            value: this.getCleaningOptions().fanSpeed ?? (fanSpeed ?
                 fanSpeed.value :
-                PresetSelectionStateAttribute.INTENSITY.OFF,
+                PresetSelectionStateAttribute.INTENSITY.OFF),
         });
     }
 
@@ -891,9 +967,10 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         return new PresetSelectionStateAttribute({
             type: PresetSelectionStateAttribute.TYPE.WATER_GRADE,
             // TODO: this should have a mapper.
-            value: waterLevel ?
+            // Show the remembered level: the robot falls back to its default after each cleanup
+            value: this.getCleaningOptions().waterLevel ?? (waterLevel ?
                 waterLevel.value :
-                PresetSelectionStateAttribute.INTENSITY.OFF,
+                PresetSelectionStateAttribute.INTENSITY.OFF),
         });
     }
 
