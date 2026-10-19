@@ -11,6 +11,11 @@ It can be used on phones, tablets as well as your desktop computer.
 
 Based on **[Valetudo](https://valetudo.cloud/)**. Please, consider donating to the **[Valetudo project](https://github.com/sponsors/Hypfer)**.
 
+> **This is a fork** of [congatudo/Congatudo](https://github.com/congatudo/Congatudo) with extra fixes and its own
+> Home Assistant add-on ([details](ha-addon/README.md)):
+>
+> [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fanderizquierdo%2FCongatudo)
+
 | Brand   | Serie | Models tested and supported                                   |
 |---------|-------|---------------------------------------------------------------|
 | Cecotec | Conga | 3XXX (except for 3890), 4XXX (except for 4690), 5090 and 5490 |

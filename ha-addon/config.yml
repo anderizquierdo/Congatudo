@@ -1,0 +1,31 @@
+name: Congatudo
+version: 2026.10.0
+slug: congatudo
+init: false
+description: Free your Cecotec Conga from the cloud (anderizquierdo fork)
+url: https://github.com/anderizquierdo/Congatudo
+arch:
+  - amd64
+startup: application
+boot: auto
+services:
+  - mqtt:want
+ports:
+  8080/tcp: null
+  4010/tcp: 4010
+  4030/tcp: 4030
+  4050/tcp: 4050
+ports_description:
+  8080/tcp: "webui"
+  4010/tcp: "conga cmd port"
+  4030/tcp: "conga map port"
+  4050/tcp: "conga rtc port"
+map:
+  - homeassistant_config:rw
+ingress: true
+ingress_port: 8080
+panel_icon: mdi:robot-vacuum
+# Non-admin users can open the panel (Supervisor enforces this since 2026.10.2)
+panel_admin: false
+schema:
+  debug: bool?
