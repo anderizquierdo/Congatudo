@@ -25,10 +25,12 @@ Or add `https://github.com/anderizquierdo/Congatudo` manually in
 
 ## Releasing a new version
 
-1. Build the binary: `npm ci && npm run build_openapi_schema && npm run build --workspace=frontend && npm run build_amd64 --workspace=backend`.
-2. Create a GitHub release whose tag equals the new add-on version and upload
-   `build/amd64/valetudo` as `valetudo-amd64`.
-3. Bump `version` in `config.yml`, set `VALETUDO_SHA256` in the `Dockerfile` and
-   add an entry to `CHANGELOG.md`.
+1. Bump `version` in `config.yml` and add an entry to `CHANGELOG.md`; commit and push.
+2. Publish a GitHub release whose tag equals that version.
+3. The `Home Assistant add-on image` workflow builds the binary and the add-on image and
+   pushes `ghcr.io/anderizquierdo/congatudo-addon-amd64:<version>`, which Home Assistant
+   pulls on install/update (nothing is built on the Home Assistant host).
+
+Local build: `docker build -f ha-addon/Dockerfile .` from the repository root.
 
 Icon and logo come from [congatudo-add-on](https://github.com/congatudo/congatudo-add-on) (MIT).

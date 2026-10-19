@@ -1,9 +1,10 @@
 name: Congatudo
-version: 2026.10.0
+version: 2026.10.1
 slug: congatudo
 init: false
 description: Free your Cecotec Conga from the cloud (anderizquierdo fork)
 url: https://github.com/anderizquierdo/Congatudo
+image: ghcr.io/anderizquierdo/congatudo-addon-{arch}
 arch:
   - amd64
 startup: application
