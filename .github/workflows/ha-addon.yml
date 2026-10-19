@@ -22,6 +22,10 @@ jobs:
             echo "::error::Tag/ref '$GITHUB_REF_NAME' does not match ha-addon/config.yml version '$version'"
             exit 1
           fi
+          if [ "$(jq -r .version package.json)" != "$version" ]; then
+            echo "::error::package.json version does not match ha-addon/config.yml version '$version'"
+            exit 1
+          fi
           echo "VERSION=$version" >> "$GITHUB_ENV"
       - name: Log in to ghcr.io
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0

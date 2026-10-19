@@ -1,5 +1,5 @@
 name: Congatudo
-version: 2026.10.1
+version: 2026.10.2
 slug: congatudo
 init: false
 description: Free your Cecotec Conga from the cloud (anderizquierdo fork)

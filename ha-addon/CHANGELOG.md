@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.10.2
+
+- New "Cleaning options" card on the home controls with **Double pass**: the robot
+  cleans everything twice and starts the second pass where the first one ends,
+  instead of returning to the dock. **Carpet mode** moved there from Robot settings.
+  Both settings are stored on the robot and keep their value between cleanups.
+- The version shown by Congatudo (About, Updater) now matches the add-on version.
+
 ## 2026.10.1
 
 - The add-on image is now prebuilt by GitHub Actions and published to ghcr.io;
