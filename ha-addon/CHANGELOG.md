@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.10.4
+
+- New **Edges only** switch in "Cleaning options": the next cleanup started with Start
+  (from Congatudo or Home Assistant) cleans only along the walls and around obstacles,
+  using the robot's own edges mode. Handy to map a home quickly before a full cleanup.
+  It turns **Double pass** off, keeps the edges mode on pause and resume, and turns
+  itself off when the cleanup is stopped or ends. Room and zone cleanups ignore it.
+  First release with this mode: not yet checked on a real robot.
+
 ## 2026.10.3
 
 - Congatudo remembers **Double pass**, **Carpet mode**, **fan speed** and **water level**
