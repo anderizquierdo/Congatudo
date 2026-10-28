@@ -113,6 +113,63 @@
       }
     }
   },
+  "/api/v2/robot/capabilities/EdgeCleanControlCapability": {
+    "get": {
+      "tags": [
+        "EdgeCleanControlCapability"
+      ],
+      "summary": "Get edges cleanup (next cleanup only) setting",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "EdgeCleanControlCapability"
+      ],
+      "summary": "Set edges cleanup (next cleanup only) setting",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "enable",
+                    "disable"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
   "/api/v2/robot/capabilities/CarpetModeControlCapability/properties": {
     "get": {
       "tags": [
@@ -137,6 +194,26 @@
     "get": {
       "tags": [
         "RepeatCleanControlCapability"
+      ],
+      "summary": "Get various capability-related properties",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/v2/robot/capabilities/EdgeCleanControlCapability/properties": {
+    "get": {
+      "tags": [
+        "EdgeCleanControlCapability"
       ],
       "summary": "Get various capability-related properties",
       "responses": {

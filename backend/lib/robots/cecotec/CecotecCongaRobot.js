@@ -34,6 +34,13 @@ const DEVICE_MODE_TO_STATUS_STATE_FLAG = {
     [DeviceMode.VALUE.ZONE]: StatusStateAttribute.FLAG.ZONE,
 };
 
+// agnoc keeps these private
+const CTRL_VALUE = {STOP: 0, START: 1, PAUSE: 2};
+// cleanType of DEVICE_AUTO_CLEAN_REQ: agnoc always sends 2 (full cleanup). 3 is the edges mode
+// (MODE_CORNERS_CLEAN in the firmware), taken from the clean modes of scheduled orders
+// (auto 1, border 3, mop 4). Not yet checked on a real robot.
+const CLEAN_TYPE_EDGES = 3;
+
 /** @type {Set<string>} */
 const NON_BLOCKING_DEVICE_ERRORS = new Set([
     DeviceError.VALUE.GLOBAL_APPOINT_CLEAN,
@@ -114,6 +121,13 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         super(options);
 
         this.pathPoints = [];
+        /**
+         * Edges cleanup: "armed" by the user for the next start, "started" once sent to the robot.
+         * Back to "off" when the cleanup is stopped or ends, so it never sticks.
+         *
+         * @type {"off"|"armed"|"started"}
+         */
+        this.edgeClean = "off";
         this.server = new CloudServer();
         this.emitStateUpdated = throttle(this.emitStateUpdated.bind(this));
         this.emitStateAttributesUpdated = throttle(
@@ -133,6 +147,11 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         );
         this.registerCapability(
             new capabilities.CecotecRepeatCleanControlCapability({
+                robot: this,
+            })
+        );
+        this.registerCapability(
+            new capabilities.CecotecEdgeCleanControlCapability({
                 robot: this,
             })
         );
@@ -328,6 +347,70 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     /**
+     * Edges and double pass do not go together: turning edges on turns double pass off.
+     *
+     * @param {boolean} enable
+     * @returns {Promise<void>}
+     */
+    async setEdgeClean(enable) {
+        if (!this.robot) {
+            throw new Error("There is no robot connected to server");
+        }
+
+        if (!enable) {
+            this.edgeClean = "off";
+
+            return;
+        }
+
+        if (this.edgeClean === "off") {
+            this.edgeClean = "armed";
+        }
+        await this.setRepeatClean(false);
+        this.setCleaningOption("repeatClean", false);
+    }
+
+    /**
+     * @param {number} ctrlValue
+     * @returns {Promise<void>}
+     */
+    async sendEdgeClean(ctrlValue) {
+        await this.robot.sendRecv("DEVICE_AUTO_CLEAN_REQ", "DEVICE_AUTO_CLEAN_RSP", {
+            ctrlValue: ctrlValue,
+            cleanType: CLEAN_TYPE_EDGES
+        });
+    }
+
+    async startEdgeClean() {
+        await this.sendEdgeClean(CTRL_VALUE.START);
+        this.edgeClean = "started";
+    }
+
+    async pauseEdgeClean() {
+        await this.sendEdgeClean(CTRL_VALUE.PAUSE);
+    }
+
+    async stopEdgeClean() {
+        await this.sendEdgeClean(CTRL_VALUE.STOP);
+        this.edgeClean = "off";
+    }
+
+    /**
+     * A cleanup that ends (finished, sent home or given up) takes the edges choice with it.
+     *
+     * @param {string} oldStatus
+     * @param {string} newStatus
+     */
+    onStatusChange(oldStatus, newStatus) {
+        if (
+            [StatusStateAttribute.VALUE.CLEANING, StatusStateAttribute.VALUE.PAUSED].includes(oldStatus) &&
+            [StatusStateAttribute.VALUE.RETURNING, StatusStateAttribute.VALUE.IDLE, StatusStateAttribute.VALUE.DOCKED].includes(newStatus)
+        ) {
+            this.edgeClean = "off";
+        }
+    }
+
+    /**
      * Best effort: a robot that does not take an option should not block the cleanup.
      *
      * @returns {Promise<void>}
@@ -392,6 +475,10 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
       oldStatus.value === StatusStateAttribute.VALUE.DOCKED
         ) {
             this.pathPoints = [];
+        }
+
+        if (oldStatus) {
+            this.onStatusChange(oldStatus.value, newStatus.value);
         }
 
         this.state.upsertFirstMatchingAttribute(this.getBatteryState(robot));

@@ -783,6 +783,18 @@ export const sendRepeatCleanEnable = async (enable: boolean): Promise<void> => {
     await sendToggleMutation(Capability.RepeatCleanControl, enable);
 };
 
+export const fetchEdgeCleanState = async (): Promise<SimpleToggleState> => {
+    return valetudoAPI
+        .get<SimpleToggleState>(`/robot/capabilities/${Capability.EdgeCleanControl}`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendEdgeCleanEnable = async (enable: boolean): Promise<void> => {
+    await sendToggleMutation(Capability.EdgeCleanControl, enable);
+};
+
 export const fetchObstacleAvoidanceControlState = async (): Promise<SimpleToggleState> => {
     return valetudoAPI
         .get<SimpleToggleState>(`/robot/capabilities/${Capability.ObstacleAvoidanceControl}`)

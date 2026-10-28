@@ -26,6 +26,7 @@ const ControlsBody = (): React.ReactElement => {
         currentStatistics,
         carpetMode,
         repeatClean,
+        edgeClean,
     ] = useCapabilitiesSupported(
         Capability.BasicControl,
         Capability.FanSpeedControl,
@@ -35,7 +36,8 @@ const ControlsBody = (): React.ReactElement => {
         Capability.MopDockDryManualTrigger,
         Capability.CurrentStatistics,
         Capability.CarpetModeControl,
-        Capability.RepeatCleanControl
+        Capability.RepeatCleanControl,
+        Capability.EdgeCleanControl
     );
 
     const {
@@ -80,8 +82,8 @@ const ControlsBody = (): React.ReactElement => {
                 />
             )}
 
-            {(carpetMode || repeatClean) && (
-                <CleaningOptions carpetMode={carpetMode} repeatClean={repeatClean}/>
+            {(carpetMode || repeatClean || edgeClean) && (
+                <CleaningOptions carpetMode={carpetMode} repeatClean={repeatClean} edgeClean={edgeClean}/>
             )}
 
             {

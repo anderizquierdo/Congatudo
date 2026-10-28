@@ -14,6 +14,7 @@ import {
     fetchCapabilities,
     fetchCarpetModeState,
     fetchRepeatCleanState,
+    fetchEdgeCleanState,
     fetchCombinedVirtualRestrictionsProperties,
     fetchConsumableStateInformation,
     fetchCurrentStatistics,
@@ -53,6 +54,7 @@ import {
     sendBasicControlCommand,
     sendCarpetModeEnable,
     sendRepeatCleanEnable,
+    sendEdgeCleanEnable,
     sendCleanSegmentsCommand,
     sendCleanZonesCommand,
     sendCombinedVirtualRestrictionsUpdate,
@@ -167,6 +169,7 @@ enum QueryKey {
     ValetudoVersion = "valetudo_version",
     CarpetMode = "carpet_mode",
     RepeatClean = "repeat_clean",
+    EdgeClean = "edge_clean",
     SpeakerVolume = "speaker_volume",
     VoicePackManagement = "voice_pack",
     SystemHostInfo = "system_host_info",
@@ -1049,12 +1052,48 @@ export const useRepeatCleanStateQuery = () => {
 };
 
 export const useRepeatCleanStateMutation = () => {
+    const queryClient = useQueryClient();
+
     return useValetudoFetchingMutation({
         queryKey: [QueryKey.RepeatClean],
-        mutationFn: (enable: boolean) => {
-            return sendRepeatCleanEnable(enable).then(fetchRepeatCleanState);
+        mutationFn: async (enable: boolean) => {
+            await sendRepeatCleanEnable(enable);
+            // Turning double pass on turns edges off
+            await queryClient.invalidateQueries({queryKey: [QueryKey.EdgeClean]});
+
+            return fetchRepeatCleanState();
         },
         onError: useOnCommandError(Capability.RepeatCleanControl)
+    });
+};
+
+export const useEdgeCleanStateQuery = () => {
+    // The robot turns edges off when a cleanup ends: fetch it again on every status change
+    const {data: status} = useRobotStatusQuery((state) => {
+        return state.value;
+    });
+
+    return useQuery( {
+        queryKey: [QueryKey.EdgeClean, status],
+        queryFn: fetchEdgeCleanState,
+
+        staleTime: Infinity
+    });
+};
+
+export const useEdgeCleanStateMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (enable: boolean) => {
+            return sendEdgeCleanEnable(enable).then(fetchEdgeCleanState);
+        },
+        onSuccess: async () => {
+            // Turning edges on turns double pass off
+            await queryClient.invalidateQueries({queryKey: [QueryKey.EdgeClean]});
+            await queryClient.invalidateQueries({queryKey: [QueryKey.RepeatClean]});
+        },
+        onError: useOnCommandError(Capability.EdgeCleanControl)
     });
 };
 

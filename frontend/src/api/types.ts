@@ -27,6 +27,7 @@ export enum Capability {
     OperationModeControl = "OperationModeControlCapability",
     PersistentMapControl = "PersistentMapControlCapability",
     RepeatCleanControl = "RepeatCleanControlCapability",
+    EdgeCleanControl = "EdgeCleanControlCapability",
     SpeakerTest = "SpeakerTestCapability",
     SpeakerVolumeControl = "SpeakerVolumeControlCapability",
     TotalStatistics = "TotalStatisticsCapability",

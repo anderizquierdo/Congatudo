@@ -22,6 +22,10 @@ class CecotecRepeatCleanControlCapability extends RepeatCleanControlCapability {
      * @returns {Promise<void>}
      */
     async enable() {
+        // Edges and double pass do not go together; a running edges cleanup is left alone
+        if (this.robot.edgeClean === "armed") {
+            this.robot.edgeClean = "off";
+        }
         await this.robot.setRepeatClean(true);
         this.robot.setCleaningOption("repeatClean", true);
     }

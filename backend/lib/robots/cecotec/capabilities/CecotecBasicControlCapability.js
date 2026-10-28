@@ -10,7 +10,12 @@ module.exports = class CecotecBasicControlCapability extends BasicControlCapabil
         }
 
         await this.robot.applyCleaningOptions();
-        await this.robot.robot.start();
+        if (this.robot.edgeClean !== "off") {
+            // Also resumes a paused edges cleanup: agnoc's start() would resume it as a full one
+            await this.robot.startEdgeClean();
+        } else {
+            await this.robot.robot.start();
+        }
     }
 
     async stop() {
@@ -18,7 +23,12 @@ module.exports = class CecotecBasicControlCapability extends BasicControlCapabil
             throw new Error("There is no robot connected to server");
         }
 
-        await this.robot.robot.stop();
+        if (this.robot.edgeClean === "started") {
+            await this.robot.stopEdgeClean();
+        } else {
+            this.robot.edgeClean = "off";
+            await this.robot.robot.stop();
+        }
     }
 
     async pause() {
@@ -26,7 +36,11 @@ module.exports = class CecotecBasicControlCapability extends BasicControlCapabil
             throw new Error("There is no robot connected to server");
         }
 
-        await this.robot.robot.pause();
+        if (this.robot.edgeClean === "started") {
+            await this.robot.pauseEdgeClean();
+        } else {
+            await this.robot.robot.pause();
+        }
     }
 
     async home() {

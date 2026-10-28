@@ -2,6 +2,8 @@ import {FormControlLabel, Grid, Switch} from "@mui/material";
 import {Tune as CleaningOptionsIcon} from "@mui/icons-material";
 import React from "react";
 import {
+    useEdgeCleanStateMutation,
+    useEdgeCleanStateQuery,
     useCarpetModeStateMutation,
     useCarpetModeStateQuery,
     useRepeatCleanStateMutation,
@@ -36,9 +38,10 @@ const ToggleOption = ({label, useQuery, useMutation}: ToggleOptionProps): React.
     );
 };
 
-// Congatudo remembers both and sends them again before every cleanup: the robot resets some of
-// them when a cleanup ends
-const CleaningOptions = ({carpetMode, repeatClean}: {carpetMode: boolean; repeatClean: boolean}): React.ReactElement => {
+// Congatudo remembers carpet mode and double pass and sends them again before every cleanup: the
+// robot resets some of them when a cleanup ends. Edges is for the next cleanup only: it turns
+// double pass off and turns itself off when the cleanup is stopped or ends.
+const CleaningOptions = ({carpetMode, repeatClean, edgeClean}: {carpetMode: boolean; repeatClean: boolean; edgeClean: boolean}): React.ReactElement => {
     return (
         <ControlsCard icon={CleaningOptionsIcon} title="Cleaning options">
             <Grid container direction="column">
@@ -47,6 +50,9 @@ const CleaningOptions = ({carpetMode, repeatClean}: {carpetMode: boolean; repeat
                 )}
                 {repeatClean && (
                     <ToggleOption label="Double pass" useQuery={useRepeatCleanStateQuery} useMutation={useRepeatCleanStateMutation}/>
+                )}
+                {edgeClean && (
+                    <ToggleOption label="Edges only" useQuery={useEdgeCleanStateQuery} useMutation={useEdgeCleanStateMutation}/>
                 )}
             </Grid>
         </ControlsCard>
